@@ -1,0 +1,30 @@
+{
+  "name": "package",
+  "version": "1.1.2",
+  "description": "Test Package",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha test",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "test",
+    "npm",
+    "node"
+  ],
+  "author": "Louis Saint-Martin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.12.4",
+    "mongoose": "4.0.3",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "chai": "~2.3.0",
+    "mocha": "^2.2.5",
+    "supertest": "^1.0.1"
+  },
+  "directories": {
+    "test": "test"
+  }
+}
