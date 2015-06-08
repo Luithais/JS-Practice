@@ -1,11 +1,18 @@
 var mongoose = require('mongoose');
 var promises = require('./lib/promises');
 var Test = require('./lib/schemaPractice');
-mongoose.connect('mongodb://localhost/test');
 var Q = require('q');
 var express = require('express');
+var bodyParser = require('body-parser');
+var json = require('express-json');
+
+mongoose.connect('mongodb://localhost/test');
 
 var app = express();
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -46,34 +53,50 @@ app.get('/document', function(req, res){
 	console.log(dbDoc);
 });
 
+app.param('character', function(req, res, next, character){
+	Test.findOne({name: character}, function(err, result){
+		if (err){
+			res.sendStatus(404);
+		}
 
-app.get('/characters/:name', function(req, res){
-	Test.findOne({name: req.params.name}, function(err, result){
-		res.send(result.toObject());
+		req.character = result;
+		next();
 	});
 });
 
-app.delete('/characters/:name', function(req, res){
-	Test.remove({ name: req.params.name },function(err){
-            res.sendStatus(200);
+app.get('/character/:name', function(req, res){
+	Test.findOne({name: req.params.name}, function(err, result){
+		res.send(result);
+	});
+});
+
+app.delete('/character/:name', function(req, res){
+	Test.remove({name: req.params.name}, function(err, result){
+		if (err){
+			res.sendStatus(404);
+		}
+
+		res.sendStatus(200);
         });
 });
 
-app.update('/characters/:name', function(req, res){
-
+app.put('/:character/:update', function(req, res){
+	Test.update(req.character.name, { name: req.params.update }, function (err){
+		res.sendStatus(200);
+	});
 });
 
-app.post('/new', function(req, res){
-	var result = null;
+app.post('/newCharacter', function(req, res){
+	console.log(req.body.name);
+	console.log(req.body.level);
 
-	promises.saveDocument({name: 'Squire', level: 1})
-	.then(function(result){
-		console.log(result);
-		res.send(result);
-	}, function(err){
-		console.log(err);
+	promises.saveDocument({name: req.body.name, level: req.body.level})
+	.then(function (result){
+		res.sendStatus(201);
+	}, function (err){
+		res.send(err);
 	});
-})
+});
 
 var server = app.listen(3000, function () {
 

@@ -15,7 +15,10 @@
   "author": "Louis Saint-Martin",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.12.4",
+    "connect": "^3.3.5",
     "express": "^4.12.4",
+    "json": "^9.0.3",
     "mongoose": "4.0.3",
     "q": "^1.4.1"
   },
